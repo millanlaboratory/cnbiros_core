@@ -1,4 +1,7 @@
+uint16  type			# Type of service required
 float32 frequency 	# Frequency rate for the interface cycle
 
 ---
-bool 	result
+float32 frequency
+float32 time
+bool    result

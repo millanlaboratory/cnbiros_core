@@ -21,8 +21,8 @@ class NodeInterface : public ros::NodeHandle {
 		std::string GetName(void);
 
 		bool SetRate(const float rate);
-		float GetExpectedRate(void);
-		float GetActualRate(void);
+		float GetRate(void);
+		float GetCycleTime(void);
 
 		
 		void Start(void);
@@ -51,6 +51,10 @@ class NodeInterface : public ros::NodeHandle {
 
 		static const unsigned int DoStop 	= 1;
 		static const unsigned int DoResume 	= 2;
+		
+		static const unsigned int DoSetRate			= 1;
+		static const unsigned int DoGetRate 		= 2;
+		static const unsigned int DoGetCycleTime 	= 3;
 
 	private:
 		ros::NodeHandle* 	rosnode_;

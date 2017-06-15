@@ -46,7 +46,7 @@ bool NodeInterface::on_state_service_(cnbiros_core::InterfaceState::Request &req
 			}
 			break;
 		default:
-			ROS_INFO("Unknown request for %s interface", this->GetName().c_str());
+			ROS_INFO("Unknown state request for %s", this->GetName().c_str());
 			break;
 	}
 
@@ -56,8 +56,30 @@ bool NodeInterface::on_state_service_(cnbiros_core::InterfaceState::Request &req
 bool NodeInterface::on_rate_service_(cnbiros_core::InterfaceRate::Request &req,
 									 cnbiros_core::InterfaceRate::Response &res) {
 
-	ROS_INFO("%s requested to set its rate at %f Hz", this->GetName().c_str(), req.frequency);
-	res.result = this->SetRate(req.frequency);
+	res.frequency = 0.0f;
+	res.time      = 0.0f;
+	res.result 	  = true;
+
+	switch(req.type) {
+		case NodeInterface::DoSetRate:
+			ROS_INFO("%s requested to set its rate at %f Hz", this->GetName().c_str(), req.frequency);
+			if(this->SetRate(req.frequency))
+				res.frequency = req.frequency;
+			break;
+		case NodeInterface::DoGetRate:
+			ROS_INFO("%s requested to give its rate", this->GetName().c_str());
+			res.frequency = this->GetRate();
+			break;
+		case NodeInterface::DoGetCycleTime:
+			ROS_INFO("%s requested to give its cycle time", this->GetName().c_str());
+			res.time = this->GetCycleTime();
+			break;
+		default:
+			ROS_INFO("Unknown rate request for %s", this->GetName().c_str());
+			res.result = false;
+			break;
+	}
+			
 	return res.result;
 }
 
@@ -73,7 +95,12 @@ bool NodeInterface::SetRate(const float frequency) {
 
 	bool result = false;
 
-	if(frequency != this->GetExpectedRate()) {
+	if(frequency == 0.0f) {
+		ROS_INFO("%s cannot set its rate at 0.0 Hz", this->GetName().c_str());
+		return result;
+	}
+
+	if(frequency != this->GetRate()) {
 		this->rosrate_ = new ros::Rate(frequency);
 		ROS_INFO("Set rate of %s to %f Hz", this->GetName().c_str(), frequency);
 		this->onRateChange();
@@ -85,12 +112,12 @@ bool NodeInterface::SetRate(const float frequency) {
 	return result;
 }
 
-float NodeInterface::GetExpectedRate(void) {
+float NodeInterface::GetRate(void) {
 	return float(1.0f)/this->rosrate_->expectedCycleTime().toSec();
 }
 
-float NodeInterface::GetActualRate(void) {
-	return float(1.0f)/this->rosrate_->cycleTime().toSec();
+float NodeInterface::GetCycleTime(void) {
+	return this->rosrate_->cycleTime().toSec();
 }
 
 
