@@ -1,0 +1,4 @@
+float32 frequency 	# Frequency rate for the interface cycle
+
+---
+bool 	result

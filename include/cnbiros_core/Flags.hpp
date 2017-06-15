@@ -3,6 +3,8 @@
 
 
 #define CNBIROS_CORE_BUFFER_MESSAGES 	1000
+#define CNBIROS_CORE_NODE_RATE 			10
+
 
 
 #endif

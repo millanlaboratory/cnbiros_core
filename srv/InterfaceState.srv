@@ -1,0 +1,4 @@
+uint16 	state 	# RosInterface State as defined in ...
+
+---
+bool 	result
