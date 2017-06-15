@@ -7,22 +7,26 @@ namespace cnbiros {
 	namespace core {
 
 NodeInterface::NodeInterface(ros::NodeHandle* node, const std::string name) {
-
+	
 	// Initialize interface
 	this->rosnode_		= node;
 	this->rosname_ 	    = name;
 	this->SetRate(CNBIROS_CORE_NODE_RATE);
 
 	// Initialize services
-	this->rossrv_state_ = this->advertiseService(this->rosnode_->getNamespace()+"/state", 
-												 &NodeInterface::on_state_service_, this); 
-	this->rossrv_rate_  = this->advertiseService(this->rosnode_->getNamespace()+"/rate",  
-												 &NodeInterface::on_rate_service_, this); 
+	this->rossrv_state_ = this->rosnode_->advertiseService(this->rosnode_->getNamespace()+"/state", 
+												 		   &NodeInterface::on_state_service_, this); 
+	this->rossrv_rate_  = this->rosnode_->advertiseService(this->rosnode_->getNamespace()+"/rate",  
+												 		   &NodeInterface::on_rate_service_, this); 
 }
 
 NodeInterface::~NodeInterface(void) {
 	delete	this->rosrate_;
 	this->rosnode_->shutdown();
+}
+
+ros::NodeHandle* NodeInterface::GetNode(void) {
+	return this->rosnode_;
 }
 
 bool NodeInterface::on_state_service_(cnbiros_core::InterfaceState::Request &req,
@@ -100,14 +104,10 @@ bool NodeInterface::SetRate(const float frequency) {
 		return result;
 	}
 
-	if(frequency != this->GetRate()) {
-		this->rosrate_ = new ros::Rate(frequency);
-		ROS_INFO("Set rate of %s to %f Hz", this->GetName().c_str(), frequency);
-		this->onRateChange();
-		result = true;
-	} else {
-		ROS_INFO("%s's rate already set at %f Hz", this->GetName().c_str(), frequency);
-	}
+	this->rosrate_ = new ros::Rate(frequency);
+	ROS_INFO("Set rate of %s to %f Hz", this->GetName().c_str(), frequency);
+	this->onRateChange();
+	result = true;
 
 	return result;
 }
@@ -144,7 +144,7 @@ void NodeInterface::Start(void) {
 	ROS_INFO("%s starts", this->GetName().c_str());
 	this->isrunning_ = true;
 	
-	while(this->ok()) {
+	while(this->rosnode_->ok()) {
 
 		if(this->IsRunning())
 			this->onRunning();

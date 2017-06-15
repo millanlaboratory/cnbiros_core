@@ -11,11 +11,13 @@
 namespace cnbiros {
 	namespace core {
 
-class NodeInterface : public ros::NodeHandle {
+class NodeInterface  {
 
 	public:
 		NodeInterface(ros::NodeHandle* node, const std::string name);
 		virtual ~NodeInterface(void);
+
+		ros::NodeHandle* GetNode(void);
 
 		void SetName(const std::string name);
 		std::string GetName(void);
