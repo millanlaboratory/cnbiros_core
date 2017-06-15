@@ -1,22 +1,22 @@
 #ifndef CNBIROS_CORE_SETSUBSCRIBERS_CPP
 #define CNBIROS_CORE_SETSUBSCRIBERS_CPP
 
-#include "cnbiros_core/SetSubscribers.hpp"
+#include "cnbiros_core/Subscribers.hpp"
 
 namespace cnbiros {
 	namespace core {
 
-SetSubscribers::SetSubscribers(ros::NodeHandle* node) {
+Subscribers::Subscribers(ros::NodeHandle* node) {
 	this->rosnode_ = node;
 }
 
-SetSubscribers::~SetSubscribers(void) {}
+Subscribers::~Subscribers(void) {}
 
-MapSubIt SetSubscribers::Find(const std::string& topic) {
+MapSubIt Subscribers::Find(const std::string& topic) {
 	return this->rossubs_.find(topic);
 }
 
-bool SetSubscribers::Exist(const std::string& topic) {
+bool Subscribers::Exist(const std::string& topic) {
 
 	bool retcod = false;
 
@@ -26,7 +26,7 @@ bool SetSubscribers::Exist(const std::string& topic) {
 	return retcod;
 }
 
-bool SetSubscribers::Remove(const std::string& topic) {
+bool Subscribers::Remove(const std::string& topic) {
 
 	bool retcod = false;
 	MapSubIt it = this->Find(topic);
@@ -39,11 +39,11 @@ bool SetSubscribers::Remove(const std::string& topic) {
 	return retcod;
 }
 
-void SetSubscribers::Erase(void) {
+void Subscribers::Erase(void) {
 	this->rossubs_.clear();
 }
 
-bool SetSubscribers::Get(const std::string& topic, ros::Subscriber*& sub) {
+bool Subscribers::Get(const std::string& topic, ros::Subscriber*& sub) {
 
 	bool retcod = false;
 

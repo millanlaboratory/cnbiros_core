@@ -1,22 +1,22 @@
-#ifndef CNBIROS_CORE_SETPUBLISHERS_CPP
-#define CNBIROS_CORE_SETPUBLISHERS_CPP
+#ifndef CNBIROS_CORE_PUBLISHERS_CPP
+#define CNBIROS_CORE_PUBLISHERS_CPP
 
-#include "cnbiros_core/SetPublishers.hpp"
+#include "cnbiros_core/Publishers.hpp"
 
 namespace cnbiros {
 	namespace core {
 
-SetPublishers::SetPublishers(ros::NodeHandle* node) {
+Publishers::Publishers(ros::NodeHandle* node) {
 	this->rosnode_ = node;
 }
 
-SetPublishers::~SetPublishers(void) {}
+Publishers::~Publishers(void) {}
 
-MapPubIt SetPublishers::Find(const std::string& topic) {
+MapPubIt Publishers::Find(const std::string& topic) {
 	return this->rospubs_.find(topic);
 }
 
-bool SetPublishers::Exist(const std::string& topic) {
+bool Publishers::Exist(const std::string& topic) {
 
 	bool retcod = false;
 
@@ -26,7 +26,7 @@ bool SetPublishers::Exist(const std::string& topic) {
 	return retcod;
 }
 
-bool SetPublishers::Remove(const std::string& topic) {
+bool Publishers::Remove(const std::string& topic) {
 
 	bool retcod = false;
 	MapPubIt it = this->Find(topic);
@@ -39,11 +39,11 @@ bool SetPublishers::Remove(const std::string& topic) {
 	return retcod;
 }
 
-void SetPublishers::Erase(void) {
+void Publishers::Erase(void) {
 	this->rospubs_.clear();
 }
 
-bool SetPublishers::Get(const std::string& topic, ros::Publisher*& pub) {
+bool Publishers::Get(const std::string& topic, ros::Publisher*& pub) {
 
 	bool retcod = false;
 

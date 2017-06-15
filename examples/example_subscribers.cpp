@@ -2,7 +2,7 @@
 #include <std_msgs/String.h>
 #include <std_msgs/Float32.h>
 
-#include "cnbiros_core/SetSubscribers.hpp"
+#include "cnbiros_core/Subscribers.hpp"
 
 void cb_float(const std_msgs::Float32::ConstPtr& msg) {
 	ROS_INFO("Received message from float topic: [%f]", msg->data);
@@ -22,7 +22,7 @@ int main (int argc, char** argv) {
 	ros::NodeHandle node;
 	ros::Rate r(10);
 
-	cnbiros::core::SetSubscribers subs(&node);
+	cnbiros::core::Subscribers subs(&node);
 
 	subs.Add<std_msgs::Float32>(tfloat, cb_float);
 	subs.Add<std_msgs::String>(tstring, cb_string);

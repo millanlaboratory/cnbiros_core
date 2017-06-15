@@ -1,5 +1,5 @@
-#ifndef CNBIROS_CORE_SETPUBLISHERS_HPP
-#define CNBIROS_CORE_SETPUBLISHERS_HPP
+#ifndef CNBIROS_CORE_PUBLISHERS_HPP
+#define CNBIROS_CORE_PUBLISHERS_HPP
 
 #include <ros/ros.h>
 #include <unordered_map>
@@ -13,10 +13,10 @@ typedef std::unordered_map<std::string, ros::Publisher> MapPub;
 typedef std::unordered_map<std::string, ros::Publisher>::iterator MapPubIt;
 typedef std::unordered_map<std::string, ros::Publisher>::const_iterator MapPubConstIt;
 
-class SetPublishers {
+class Publishers {
 	public:
-		SetPublishers(ros::NodeHandle* node);
-		virtual ~SetPublishers(void);
+		Publishers(ros::NodeHandle* node);
+		virtual ~Publishers(void);
 
 		MapPubIt Find(const std::string& topic);
 		bool Exist(const std::string& topic);
@@ -37,14 +37,14 @@ class SetPublishers {
 };
 
 template<class M>
-bool SetPublishers::Add(const std::string& topic) {
+bool Publishers::Add(const std::string& topic) {
 	bool retcod = true;
 	this->rospubs_[topic] = this->rosnode_->advertise<M>(topic, CNBIROS_CORE_BUFFER_MESSAGES);
 	return retcod;
 }
 
 template<class M>
-bool SetPublishers::Publish(const std::string& topic, const M& msg) {
+bool Publishers::Publish(const std::string& topic, const M& msg) {
 	ros::Publisher* pptr;
 	bool retcod = false;
 	

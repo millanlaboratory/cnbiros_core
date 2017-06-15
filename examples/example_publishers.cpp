@@ -2,7 +2,7 @@
 #include <std_msgs/String.h>
 #include <std_msgs/Float32.h>
 
-#include "cnbiros_core/SetPublishers.hpp"
+#include "cnbiros_core/Publishers.hpp"
 
 int main (int argc, char** argv) {
 
@@ -14,7 +14,7 @@ int main (int argc, char** argv) {
 	ros::NodeHandle node;
 	ros::Rate r(10);
 
-	cnbiros::core::SetPublishers pubs(&node);
+	cnbiros::core::Publishers pubs(&node);
 
 	pubs.Add<std_msgs::Float32>(tfloat);
 	pubs.Add<std_msgs::String>(tstring);

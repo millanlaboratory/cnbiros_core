@@ -13,11 +13,11 @@ typedef std::unordered_map<std::string, ros::Subscriber> MapSub;
 typedef std::unordered_map<std::string, ros::Subscriber>::iterator MapSubIt;
 typedef std::unordered_map<std::string, ros::Subscriber>::const_iterator MapSubConstIt;
 
-class SetSubscribers {
+class Subscribers {
 
 	public:
-		SetSubscribers(ros::NodeHandle* node);
-		virtual ~SetSubscribers(void);
+		Subscribers(ros::NodeHandle* node);
+		virtual ~Subscribers(void);
 
 		MapSubIt Find(const std::string& topic);
 		bool Exist(const std::string& topic);
@@ -45,21 +45,21 @@ class SetSubscribers {
 };
 
 template<class M>
-bool SetSubscribers::Add(const std::string& topic, void(*fp)(M)) {
+bool Subscribers::Add(const std::string& topic, void(*fp)(M)) {
 	bool retcod = true;
 	this->rossubs_[topic] = this->rosnode_->subscribe<M>(topic, CNBIROS_CORE_BUFFER_MESSAGES, fp);
 	return retcod;
 }
 
 template<class M, class T>
-bool SetSubscribers::Add(const std::string& topic, void(T::*fp)(M), T* obj) {
+bool Subscribers::Add(const std::string& topic, void(T::*fp)(M), T* obj) {
 	bool retcod = true;
 	this->rossubs_[topic] = this->rosnode_->subscribe<M>(topic, CNBIROS_CORE_BUFFER_MESSAGES, fp, obj);
 	return retcod;
 }
 
 template<class M>
-bool SetSubscribers::Add(const std::string& topic, 
+bool Subscribers::Add(const std::string& topic, 
 						 const boost::function< void(const boost::shared_ptr<M const>&)> &callback) {
 	bool retcod = true;
 	this->rossubs_[topic] = this->rosnode_->subscribe<M>(topic, CNBIROS_CORE_BUFFER_MESSAGES, callback);
