@@ -31,12 +31,15 @@ class Subscribers {
 
 		template<class M, class T>
 		bool Add(const std::string& topic, void(T::*fp)(M), T* obj);
+		
+		template<class M, class T, class A>
+		bool Add(const std::string& topic, void(T::*fp)(M), T* obj, A arg);
 
 		template<class M>
 		bool Add(const std::string& topic, 
 				 const boost::function< void(const boost::shared_ptr<M const>&)> &callback);
-
-
+		
+	
 	private:
 		ros::NodeHandle* 	rosnode_;
 		MapSub				rossubs_;
@@ -58,6 +61,14 @@ bool Subscribers::Add(const std::string& topic, void(T::*fp)(M), T* obj) {
 	return retcod;
 }
 
+template<class M, class T, class A>
+bool Subscribers::Add(const std::string& topic, void(T::*fp)(M), T* obj, A arg) {
+	bool retcod = true;
+	this->rossubs_[topic] = this->rosnode_->subscribe<M>(topic, CNBIROS_CORE_BUFFER_MESSAGES, 
+							boost::bind<M>(T::fp, obj, _1, arg));
+	return retcod;
+}
+
 template<class M>
 bool Subscribers::Add(const std::string& topic, 
 						 const boost::function< void(const boost::shared_ptr<M const>&)> &callback) {
@@ -65,6 +76,8 @@ bool Subscribers::Add(const std::string& topic,
 	this->rossubs_[topic] = this->rosnode_->subscribe<M>(topic, CNBIROS_CORE_BUFFER_MESSAGES, callback);
 	return retcod;
 }
+
+
 
 	}
 }
