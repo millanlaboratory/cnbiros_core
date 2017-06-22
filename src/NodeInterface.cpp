@@ -14,10 +14,15 @@ NodeInterface::NodeInterface(ros::NodeHandle* node, const std::string name) {
 	this->SetRate(CNBIROS_CORE_NODE_RATE);
 
 	// Initialize services
-	this->rossrv_state_ = this->rosnode_->advertiseService(this->rosnode_->getNamespace()+"/state", 
+	if(ros::service::exists(this->rosnode_->getNamespace()+"/state", false) == false) {
+		this->rossrv_state_ = this->rosnode_->advertiseService(this->rosnode_->getNamespace()+"/state", 
 												 		   &NodeInterface::on_state_service_, this); 
-	this->rossrv_rate_  = this->rosnode_->advertiseService(this->rosnode_->getNamespace()+"/rate",  
+	} 
+
+	if(ros::service::exists(this->rosnode_->getNamespace()+"/rate", false) == false) {
+		this->rossrv_rate_  = this->rosnode_->advertiseService(this->rosnode_->getNamespace()+"/rate",  
 												 		   &NodeInterface::on_rate_service_, this); 
+	}
 }
 
 NodeInterface::~NodeInterface(void) {
