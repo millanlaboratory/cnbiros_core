@@ -3,8 +3,9 @@
 
 #include <ros/ros.h>
 
-#include "cnbiros_core/InterfaceState.h"
-#include "cnbiros_core/InterfaceRate.h"
+#include "cnbiros_core/SetStateSrv.h"
+#include "cnbiros_core/SetRateSrv.h"
+#include "cnbiros_core/GetRateSrv.h"
 #include "Flags.hpp"
 
 
@@ -44,19 +45,19 @@ class NodeInterface  {
 
 	private:
 		
-		bool on_state_service_(cnbiros_core::InterfaceState::Request &req,
-							   cnbiros_core::InterfaceState::Response &res);
+		bool on_set_state_(cnbiros_core::SetStateSrv::Request &req,
+						   cnbiros_core::SetStateSrv::Response &res);
 
-		bool on_rate_service_(cnbiros_core::InterfaceRate::Request &req,
-							  cnbiros_core::InterfaceRate::Response &res);
+		bool on_get_rate_(cnbiros_core::GetRateSrv::Request &req,
+					      cnbiros_core::GetRateSrv::Response &res);
+		                                       
+		bool on_set_rate_(cnbiros_core::SetRateSrv::Request &req,
+						  cnbiros_core::SetRateSrv::Response &res);
 	public:
 
 		static const unsigned int DoStop 	= 1;
 		static const unsigned int DoResume 	= 2;
 		
-		static const unsigned int DoSetRate			= 1;
-		static const unsigned int DoGetRate 		= 2;
-		static const unsigned int DoGetCycleTime 	= 3;
 
 	private:
 		ros::NodeHandle* 	rosnode_;
@@ -65,8 +66,9 @@ class NodeInterface  {
 		bool 				isrunning_;
 
 		//! Services related members
-		ros::ServiceServer rossrv_state_;
-		ros::ServiceServer rossrv_rate_;
+		ros::ServiceServer rossrv_set_state_;
+		ros::ServiceServer rossrv_set_rate_;
+		ros::ServiceServer rossrv_get_rate_;
 
 };
 

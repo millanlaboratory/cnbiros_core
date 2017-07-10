@@ -11,8 +11,9 @@ include_directories(${catkin_INCLUDE_DIRS}
 
 add_service_files(
   FILES
-  InterfaceState.srv
-  InterfaceRate.srv
+  SetStateSrv.srv
+  SetRateSrv.srv
+  GetRateSrv.srv
 )
 
 generate_messages(

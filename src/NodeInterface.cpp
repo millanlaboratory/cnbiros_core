@@ -14,14 +14,19 @@ NodeInterface::NodeInterface(ros::NodeHandle* node, const std::string name) {
 	this->SetRate(CNBIROS_CORE_NODE_RATE);
 
 	// Initialize services
-	if(ros::service::exists(this->rosnode_->getNamespace()+"/state", false) == false) {
-		this->rossrv_state_ = this->rosnode_->advertiseService(this->rosnode_->getNamespace()+"/state", 
-												 		   &NodeInterface::on_state_service_, this); 
+	if(ros::service::exists(ros::this_node::getName() + "/set_state", false) == false) {
+		this->rossrv_set_state_ = this->rosnode_->advertiseService(ros::this_node::getName() + "/set_state",
+										&NodeInterface::on_set_state_, this);
 	} 
 
-	if(ros::service::exists(this->rosnode_->getNamespace()+"/rate", false) == false) {
-		this->rossrv_rate_  = this->rosnode_->advertiseService(this->rosnode_->getNamespace()+"/rate",  
-												 		   &NodeInterface::on_rate_service_, this); 
+	if(ros::service::exists(ros::this_node::getName() + "/set_rate", false) == false) {
+		this->rossrv_get_rate_  = this->rosnode_->advertiseService(ros::this_node::getName() + "/set_rate",
+										&NodeInterface::on_set_rate_, this);
+	}
+	
+	if(ros::service::exists(ros::this_node::getName() + "/get_rate", false) == false) {
+		this->rossrv_set_rate_  = this->rosnode_->advertiseService(ros::this_node::getName() + "/get_rate",
+										&NodeInterface::on_get_rate_, this);
 	}
 }
 
@@ -34,8 +39,8 @@ ros::NodeHandle* NodeInterface::GetNode(void) {
 	return this->rosnode_;
 }
 
-bool NodeInterface::on_state_service_(cnbiros_core::InterfaceState::Request &req,
-									  cnbiros_core::InterfaceState::Response &res) {
+bool NodeInterface::on_set_state_(cnbiros_core::SetStateSrv::Request &req,
+								  cnbiros_core::SetStateSrv::Response &res) {
 
 	res.result = false;
 
@@ -62,32 +67,22 @@ bool NodeInterface::on_state_service_(cnbiros_core::InterfaceState::Request &req
 	return res.result;
 }
 
-bool NodeInterface::on_rate_service_(cnbiros_core::InterfaceRate::Request &req,
-									 cnbiros_core::InterfaceRate::Response &res) {
+bool NodeInterface::on_set_rate_(cnbiros_core::SetRateSrv::Request &req,
+							     cnbiros_core::SetRateSrv::Response &res) {
 
-	res.frequency = 0.0f;
-	res.time      = 0.0f;
+	ROS_INFO("%s requested to set its rate at %f Hz", this->GetName().c_str(), req.frequency);
+	res.result = this->SetRate(req.frequency);
+			
+	return res.result;
+}
+
+bool NodeInterface::on_get_rate_(cnbiros_core::GetRateSrv::Request &req,
+								 cnbiros_core::GetRateSrv::Response &res) {
 	res.result 	  = true;
 
-	switch(req.type) {
-		case NodeInterface::DoSetRate:
-			ROS_INFO("%s requested to set its rate at %f Hz", this->GetName().c_str(), req.frequency);
-			if(this->SetRate(req.frequency))
-				res.frequency = req.frequency;
-			break;
-		case NodeInterface::DoGetRate:
-			ROS_INFO("%s requested to give its rate", this->GetName().c_str());
-			res.frequency = this->GetRate();
-			break;
-		case NodeInterface::DoGetCycleTime:
-			ROS_INFO("%s requested to give its cycle time", this->GetName().c_str());
-			res.time = this->GetCycleTime();
-			break;
-		default:
-			ROS_INFO("Unknown rate request for %s", this->GetName().c_str());
-			res.result = false;
-			break;
-	}
+	ROS_INFO("%s requested to give its rate info", this->GetName().c_str());
+	res.frequency = this->GetRate();
+	res.time = this->GetCycleTime();
 			
 	return res.result;
 }
