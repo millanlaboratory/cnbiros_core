@@ -3,10 +3,10 @@
 
 #include <ros/ros.h>
 
+#include "Flags.hpp"
 #include "cnbiros_core/SetStateSrv.h"
 #include "cnbiros_core/SetRateSrv.h"
 #include "cnbiros_core/GetRateSrv.h"
-#include "Flags.hpp"
 
 
 namespace cnbiros {
