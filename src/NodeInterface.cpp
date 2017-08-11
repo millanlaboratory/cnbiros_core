@@ -52,8 +52,22 @@ bool NodeInterface::on_set_state_(cnbiros_core::SetStateSrv::Request &req,
 				res.result = true;
 			}
 			break;
+		case NodeInterface::DoPause:
+			ROS_INFO("%s requested to pause", this->GetName().c_str());
+			if(this->IsRunning() == true) {
+				this->Stop();
+				res.result = true;
+			}
+			break;
 		case NodeInterface::DoResume:
 			ROS_INFO("%s requested to resume", this->GetName().c_str());
+			if(this->IsRunning() == false) {
+				this->Resume();
+				res.result = true;
+			}
+			break;
+		case NodeInterface::DoStart:
+			ROS_INFO("%s requested to start", this->GetName().c_str());
 			if(this->IsRunning() == false) {
 				this->Resume();
 				res.result = true;

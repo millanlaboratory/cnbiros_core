@@ -55,8 +55,10 @@ class NodeInterface  {
 						  cnbiros_core::SetRateSrv::Response &res);
 	public:
 
-		static const unsigned int DoStop 	= 1;
-		static const unsigned int DoResume 	= 2;
+		static const unsigned int DoStart 	= 1;
+		static const unsigned int DoStop 	= 2;
+		static const unsigned int DoResume 	= 3;
+		static const unsigned int DoPause 	= 4;
 		
 
 	private:
