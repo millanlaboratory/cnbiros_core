@@ -28,6 +28,8 @@ NodeInterface::NodeInterface(ros::NodeHandle* node, const std::string name) {
 		this->rossrv_set_rate_  = this->rosnode_->advertiseService(ros::this_node::getName() + "/get_rate",
 										&NodeInterface::on_get_rate_, this);
 	}
+
+	this->isrunning_ = true;
 }
 
 NodeInterface::~NodeInterface(void) {
@@ -155,11 +157,10 @@ void NodeInterface::Resume(void) {
 
 void NodeInterface::Start(void) {
 
-	ROS_INFO("%s starts", this->GetName().c_str());
-	this->isrunning_ = true;
 	
 	while(this->rosnode_->ok()) {
 
+		ROS_INFO_ONCE("%s starts", this->GetName().c_str());
 		if(this->IsRunning())
 			this->onRunning();
 
