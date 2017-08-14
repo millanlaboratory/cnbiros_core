@@ -71,7 +71,7 @@ bool NodeInterface::on_set_state_(cnbiros_core::SetStateSrv::Request &req,
 		case NodeInterface::DoStart:
 			ROS_INFO("%s requested to start", this->GetName().c_str());
 			if(this->IsRunning() == false) {
-				this->Resume();
+				this->Start();
 				res.result = true;
 			}
 			break;
@@ -147,6 +147,14 @@ void NodeInterface::Stop(void) {
 	this->onStop();
 }
 
+void NodeInterface::Start(void) {
+	ROS_INFO("%s starts", this->GetName().c_str());
+	this->isrunning_ = true;
+
+	if(this->IsRunning())
+		this->onStart();
+}
+
 void NodeInterface::Resume(void) {
 	ROS_INFO("%s is resumed", this->GetName().c_str());
 	this->isrunning_ = true;
@@ -155,7 +163,7 @@ void NodeInterface::Resume(void) {
 		this->onStart();
 }
 
-void NodeInterface::Start(void) {
+void NodeInterface::Run(void) {
 
 	
 	while(this->rosnode_->ok()) {

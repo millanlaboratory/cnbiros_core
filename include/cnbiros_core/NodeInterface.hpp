@@ -30,6 +30,7 @@ class NodeInterface  {
 		
 		void Start(void);
 		void Stop(void);
+		void Run(void);
 		void Resume(void);
 
 		bool IsRunning(void);
@@ -37,7 +38,6 @@ class NodeInterface  {
 
 	protected:
 		virtual void onRunning(void) {};
-
 		virtual void onStop(void) {};
 		virtual void onStart(void) {};
 		virtual void onResume(void) {};
