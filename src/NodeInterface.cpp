@@ -159,8 +159,8 @@ void NodeInterface::Resume(void) {
 	ROS_INFO("%s is resumed", this->GetName().c_str());
 	this->isrunning_ = true;
 
-	if(this->IsRunning())
-		this->onStart();
+	//if(this->IsRunning())
+	//	this->onStart();
 }
 
 void NodeInterface::Run(void) {
