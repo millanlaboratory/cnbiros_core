@@ -33,11 +33,18 @@ class NodeInterface  {
 		void Run(void);
 		void Resume(void);
 
+		void Straight(void);
+		void Left(void);
+		void Right(void);
+
 		bool IsRunning(void);
 		
 
 	protected:
 		virtual void onRunning(void) {};
+		virtual void onStraight(void) {};
+		virtual void onLeft(void) {};
+		virtual void onRight(void) {};
 		virtual void onStop(void) {};
 		virtual void onStart(void) {};
 		virtual void onResume(void) {};
@@ -53,12 +60,17 @@ class NodeInterface  {
 		                                       
 		bool on_set_rate_(cnbiros_core::SetRateSrv::Request &req,
 						  cnbiros_core::SetRateSrv::Response &res);
+		bool on_set_duration_(cnbiros_core::SetRateSrv::Request &req,
+						  cnbiros_core::SetRateSrv::Response &res);
 	public:
 
 		static const unsigned int DoStart 	= 1;
 		static const unsigned int DoStop 	= 2;
 		static const unsigned int DoResume 	= 3;
 		static const unsigned int DoPause 	= 4;
+		static const unsigned int DoStraight= 5;
+		static const unsigned int DoLeft 	= 6;
+		static const unsigned int DoRight 	= 7;
 		
 
 	private:
@@ -66,11 +78,13 @@ class NodeInterface  {
 		ros::Rate* 			rosrate_;
 		std::string 		rosname_;
 		bool 				isrunning_;
-
+		unsigned int		mode;
+		float 				duration_;
 		//! Services related members
 		ros::ServiceServer rossrv_set_state_;
 		ros::ServiceServer rossrv_set_rate_;
 		ros::ServiceServer rossrv_get_rate_;
+		ros::ServiceServer rossrv_set_duration_;
 
 };
 

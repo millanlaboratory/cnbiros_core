@@ -29,7 +29,14 @@ NodeInterface::NodeInterface(ros::NodeHandle* node, const std::string name) {
 										&NodeInterface::on_get_rate_, this);
 	}
 
+	if(ros::service::exists(ros::this_node::getName() + "/set_duration", false) == false) {
+		this->rossrv_set_duration_  = this->rosnode_->advertiseService(ros::this_node::getName() + "/set_duration",
+										&NodeInterface::on_set_duration_, this);
+	}
+
 	this->isrunning_ = true;
+	this->mode = 0;
+	this->duration_ = 5.0f;
 }
 
 NodeInterface::~NodeInterface(void) {
@@ -40,6 +47,19 @@ NodeInterface::~NodeInterface(void) {
 ros::NodeHandle* NodeInterface::GetNode(void) {
 	return this->rosnode_;
 }
+
+
+
+bool NodeInterface::on_set_duration_(cnbiros_core::SetRateSrv::Request &req,
+								  cnbiros_core::SetRateSrv::Response &res) {
+	ROS_INFO("Set duration at %f s", req.frequency);
+	res.result = false;
+	this->duration_ = req.frequency;
+	res.result - true;
+
+	return res.result;
+}
+
 
 bool NodeInterface::on_set_state_(cnbiros_core::SetStateSrv::Request &req,
 								  cnbiros_core::SetStateSrv::Response &res) {
@@ -74,6 +94,24 @@ bool NodeInterface::on_set_state_(cnbiros_core::SetStateSrv::Request &req,
 				this->Start();
 				res.result = true;
 			}
+			break;
+		case NodeInterface::DoStraight:
+			ROS_INFO("%s requested to go straight", this->GetName().c_str());
+			this->isrunning_ = true;
+			this->mode = 1;
+			res.result = true;
+			break;
+		case NodeInterface::DoLeft:
+			ROS_INFO("%s requested to turn left", this->GetName().c_str());
+			this->isrunning_ = true;
+			this->mode = 2;
+			res.result = true;
+			break;
+		case NodeInterface::DoRight:
+			ROS_INFO("%s requested to turn right", this->GetName().c_str());
+			this->isrunning_ = true;
+			this->mode = 3;
+			res.result = true;
 			break;
 		default:
 			ROS_INFO("Unknown state request for %s", this->GetName().c_str());
@@ -163,14 +201,97 @@ void NodeInterface::Resume(void) {
 	//	this->onStart();
 }
 
+void NodeInterface::Straight(void) {
+	
+	ros::Time 	start = ros::Time::now();
+
+	while(this->rosnode_->ok() and (ros::Time::now()-start).toSec() < 1.0f) {
+		ROS_INFO_ONCE("Prepare to go straight for %fs", this->duration_);
+		rosrate_->sleep();
+		ros::spinOnce();
+	}
+	
+	while(this->rosnode_->ok() and (ros::Time::now()-start).toSec() < this->duration_) {
+		ROS_INFO_ONCE("starts");
+
+		this->onStraight();
+
+		rosrate_->sleep();
+		ros::spinOnce();
+	}
+	this->isrunning_ = false;
+
+}
+
+void NodeInterface::Left(void) {
+	
+	ros::Time 	start = ros::Time::now();
+
+	while(this->rosnode_->ok() and (ros::Time::now()-start).toSec() < 1.0f) {
+		ROS_INFO_ONCE("Prepare to turn left for %fs", this->duration_);
+		rosrate_->sleep();
+		ros::spinOnce();
+	}
+	
+	while(this->rosnode_->ok() and (ros::Time::now()-start).toSec() < this->duration_) {
+		ROS_INFO_ONCE("starts");
+
+		this->onLeft();
+
+		rosrate_->sleep();
+		ros::spinOnce();
+	}
+	ROS_INFO("stops");
+	this->isrunning_ = false;
+
+}
+
+void NodeInterface::Right(void) {
+	
+	ros::Time 	start = ros::Time::now();
+
+	while(this->rosnode_->ok() and (ros::Time::now()-start).toSec() < 1.0f) {
+		ROS_INFO_ONCE("Prepare to turn right for %fs", this->duration_);
+		rosrate_->sleep();
+		ros::spinOnce();
+	}
+	
+	while(this->rosnode_->ok() and (ros::Time::now()-start).toSec() < this->duration_) {
+		ROS_INFO_ONCE("starts");
+
+		this->onRight();
+
+		rosrate_->sleep();
+		ros::spinOnce();
+	}
+
+	this->isrunning_ = false;
+
+}
+
+
 void NodeInterface::Run(void) {
 
-	
 	while(this->rosnode_->ok()) {
 
 		ROS_INFO_ONCE("%s starts", this->GetName().c_str());
 		if(this->IsRunning())
-			this->onRunning();
+
+			switch(this->mode) {
+				case 0:
+					this->onRunning();
+					break;
+				case 1:
+					Straight();
+					break;
+				case 2:
+					Left();
+					break;
+				case 3:
+					Right();
+					break;
+			}
+			
 
 		rosrate_->sleep();
 		ros::spinOnce();
