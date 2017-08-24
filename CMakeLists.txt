@@ -28,6 +28,7 @@ catkin_package(
 	${PROJECT_NAME}
   CATKIN_DEPENDS
   	roscpp
+	message_runtime
 )
 
 add_library(cnbiros_core
