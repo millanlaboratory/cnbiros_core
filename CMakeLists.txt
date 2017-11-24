@@ -36,6 +36,7 @@ add_library(cnbiros_core
 			src/Subscribers.cpp
 			src/NodeInterface.cpp
 			)
+add_dependencies(cnbiros_core cnbiros_core_generate_messages_cpp)
 target_link_libraries(cnbiros_core ${catkin_LIBRARIES})
 
 add_executable(example_publishers examples/example_publishers.cpp)
