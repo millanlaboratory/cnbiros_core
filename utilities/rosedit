@@ -1,0 +1,45 @@
+#!/bin/bash
+
+CURRDIR=$PWD
+BASEPATH="/src"
+PACKAGES=""
+index=0
+while [ $# -gt 0 ]
+do
+    unset OPTIND
+    unset OPTARG
+	while getopts "hr:" opt; do
+	    case "$opt" in
+	    h)
+			echo "Help:"
+	    	echo "rosedit PACKAGE [-r ROOTPATH]"        # unknown option
+	        exit 0
+	        ;;
+	    r)  
+			BASEPATH=$OPTARG
+	        ;;
+	    esac
+	done
+
+   shift $((OPTIND-1))
+   PACKAGES="${PACKAGES} $1 "
+   shift
+done
+
+#[ "$1" = "--" ] && shift
+
+if [ ${#PACKAGES} -eq 2 ]; then
+    echo "rosedit PACKAGES [-r BASEPATH]"        # unknown option
+	exit 0
+fi
+
+ROOTPATH=$CURRDIR$BASEPATH
+echo "Packages: "$PACKAGES
+echo "Root: $ROOTPATH"
+
+for item in $PACKAGES; do
+	gvim -O2 $ROOTPATH/$item/src/*.*pp $ROOTPATH/$item/include/$item/*.*pp $ROOTPATH/$item/examples/*.*pp
+done
+
+
+								 

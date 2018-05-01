@@ -1,0 +1,38 @@
+#!/bin/sh -e
+
+usage() { echo "Usage:	$0	[-a <ROS_IP>]" &&
+		  echo "			[-n <ROS_HOSTNAME>]" &&
+	      echo "			[-m <ROS_MASTER_URI>]";}
+
+ROSIP=127.0.0.1
+ROSHOSTNAME=localhost
+ROSMASTER=localhost
+
+while getopts "ha:n:m:" opt; do
+	case "$opt" in
+    	a) # Specify ROS_IP 
+			ROSIP=$OPTARG
+    	    ;;
+    	n)  
+			ROSHOSTNAME=$OPTARG
+    	    ;;
+		m)
+			ROSMASTER=$OPTARG
+			;;
+		h | *)
+			usage
+			exit 0
+    	    ;;
+    esac
+done
+shift $((OPTIND-1))
+
+export ROS_IP=$ROSIP
+export ROS_HOSTNAME=$ROSHOSTNAME
+export ROS_MASTER_URI=http://$ROSMASTER:11311
+
+echo "ROS environment set up:"
+echo "  ROS_IP:         $ROSIP"
+echo "  ROS_HOSTNAME:   $ROSHOSTNAME"
+echo "  ROS_MASTER_URI: http://$ROSMASTER:11311"
+
